@@ -146,7 +146,7 @@
 
     // Função para salvar eventos no localStorage
     function saveEvents() {
-      const calendar = document.getElementById('calendar').__fc;
+      const calendar = FullCalendar.getCalendar(document.getElementById('calendar'));
       const events = calendar.getEvents().map(event => ({
         title: event.title,
         start: event.start.toISOString()
