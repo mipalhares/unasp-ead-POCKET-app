@@ -1,9 +1,8 @@
 <script>
-  let calendar;
-
   document.addEventListener('DOMContentLoaded', function () {
+    // Inicializar calendário
     const calendarEl = document.getElementById('calendar');
-    calendar = new FullCalendar.Calendar(calendarEl, {
+    let calendar = new FullCalendar.Calendar(calendarEl, {
       initialView: 'dayGridMonth',
       events: JSON.parse(localStorage.getItem('events')) || [],
       eventClick: function (info) {
@@ -14,6 +13,11 @@
       }
     });
     calendar.render();
+
+    // Renderizar tudo ao carregar
+    renderNotes();
+    renderDatabases();
+    renderConnections();
   });
 
   function saveEvents() {
@@ -29,10 +33,7 @@
     const date = document.getElementById('event-date').value;
 
     if (title && date) {
-      calendar.addEvent({
-        title: title,
-        start: date
-      });
+      calendar.addEvent({ title: title, start: date });
       saveEvents();
       document.getElementById('event-title').value = '';
       document.getElementById('event-date').value = '';
@@ -47,7 +48,7 @@
     const content = document.getElementById('note-content').value;
     if (title && content) {
       const note = { title, content, id: Date.now() };
-      const notes = JSON.parse(localStorage.getItem('notes')) || [];
+      let notes = JSON.parse(localStorage.getItem('notes') || '[]');
       notes.push(note);
       localStorage.setItem('notes', JSON.stringify(notes));
       renderNotes();
@@ -61,7 +62,8 @@
   // Renderizar anotações
   function renderNotes() {
     const notesContainer = document.getElementById('notes-container');
-    const notes = JSON.parse(localStorage.getItem('notes')) || [];
+    if (!notesContainer) return;
+    let notes = JSON.parse(localStorage.getItem('notes') || '[]');
     notesContainer.innerHTML = '';
     notes.forEach(note => {
       const noteCard = document.createElement('div');
@@ -77,7 +79,7 @@
 
   // Excluir anotação
   function deleteNote(id) {
-    let notes = JSON.parse(localStorage.getItem('notes')) || [];
+    let notes = JSON.parse(localStorage.getItem('notes') || '[]');
     notes = notes.filter(note => note.id !== id);
     localStorage.setItem('notes', JSON.stringify(notes));
     renderNotes();
@@ -89,7 +91,7 @@
     const content = document.getElementById('database-content').value;
     if (title && content) {
       const database = { title, content, id: Date.now() };
-      const databases = JSON.parse(localStorage.getItem('databases')) || [];
+      let databases = JSON.parse(localStorage.getItem('databases') || '[]');
       databases.push(database);
       localStorage.setItem('databases', JSON.stringify(databases));
       renderDatabases();
@@ -103,7 +105,8 @@
   // Renderizar bancos de dados
   function renderDatabases() {
     const databasesContainer = document.getElementById('databases-container');
-    const databases = JSON.parse(localStorage.getItem('databases')) || [];
+    if (!databasesContainer) return;
+    let databases = JSON.parse(localStorage.getItem('databases') || '[]');
     databasesContainer.innerHTML = '';
     databases.forEach(db => {
       const dbCard = document.createElement('div');
@@ -119,19 +122,19 @@
 
   // Excluir banco de dados
   function deleteDatabase(id) {
-    let databases = JSON.parse(localStorage.getItem('databases')) || [];
+    let databases = JSON.parse(localStorage.getItem('databases') || '[]');
     databases = databases.filter(db => db.id !== id);
     localStorage.setItem('databases', JSON.stringify(databases));
     renderDatabases();
   }
 
-  // Adicionar conexão de ideias
+  // Adicionar conexão
   function addConnection() {
     const title = document.getElementById('connection-title').value;
     const link = document.getElementById('connection-link').value;
     if (title && link) {
       const connection = { title, link, id: Date.now() };
-      const connections = JSON.parse(localStorage.getItem('connections')) || [];
+      let connections = JSON.parse(localStorage.getItem('connections') || '[]');
       connections.push(connection);
       localStorage.setItem('connections', JSON.stringify(connections));
       renderConnections();
@@ -145,7 +148,8 @@
   // Renderizar conexões
   function renderConnections() {
     const connectionsContainer = document.getElementById('connections-container');
-    const connections = JSON.parse(localStorage.getItem('connections')) || [];
+    if (!connectionsContainer) return;
+    let connections = JSON.parse(localStorage.getItem('connections') || '[]');
     connectionsContainer.innerHTML = '';
     connections.forEach(conn => {
       const connCard = document.createElement('div');
@@ -161,14 +165,9 @@
 
   // Excluir conexão
   function deleteConnection(id) {
-    let connections = JSON.parse(localStorage.getItem('connections')) || [];
+    let connections = JSON.parse(localStorage.getItem('connections') || '[]');
     connections = connections.filter(conn => conn.id !== id);
     localStorage.setItem('connections', JSON.stringify(connections));
     renderConnections();
   }
-
-  // Carregar anotações, bancos e conexões ao iniciar
-  renderNotes();
-  renderDatabases();
-  renderConnections();
 </script>
