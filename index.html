@@ -155,25 +155,23 @@
     }
 
     // Adicionar evento ao calendário
-    function addEvent() {
-      const title = document.getElementById('event-title').value;
-      const date = document.getElementById('event-date').value;
-      if (title && date) {
-        function saveEvents() {
-  const calendar = FullCalendar.getCalendar(document.getElementById('calendar'));
-  ...
+   function addEvent() {
+  const title = document.getElementById('event-title').value;
+  const date = document.getElementById('event-date').value;
+
+  if (title && date) {
+    const calendar = FullCalendar.getCalendar(document.getElementById('calendar'));
+    calendar.addEvent({
+      title: title,
+      start: date
+    });
+    saveEvents(); // só chamando, sem reescrever
+    document.getElementById('event-title').value = '';
+    document.getElementById('event-date').value = '';
+  } else {
+    alert('Por favor, preencha o título e a data da atividade.');
+  }
 }
-        calendar.addEvent({
-          title: title,
-          start: date
-        });
-        saveEvents();
-        document.getElementById('event-title').value = '';
-        document.getElementById('event-date').value = '';
-      } else {
-        alert('Por favor, preencha o título e a data da atividade.');
-      }
-    }
 
     // Adicionar anotação
     function addNote() {
