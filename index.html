@@ -159,7 +159,10 @@
       const title = document.getElementById('event-title').value;
       const date = document.getElementById('event-date').value;
       if (title && date) {
-        const calendar = document.getElementById('calendar').__fc;
+        function saveEvents() {
+  const calendar = FullCalendar.getCalendar(document.getElementById('calendar'));
+  ...
+}
         calendar.addEvent({
           title: title,
           start: date
