@@ -129,20 +129,48 @@
 
   <script>
     // Inicializar Calendário
-    document.addEventListener('DOMContentLoaded', function() {
-      const calendarEl = document.getElementById('calendar');
-      const calendar = new FullCalendar.Calendar(calendarEl, {
-        initialView: 'dayGridMonth',
-        events: JSON.parse(localStorage.getItem('events')) || [],
-        eventClick: function(info) {
-          if (confirm(`Deseja remover a atividade "${info.event.title}"?`)) {
-            info.event.remove();
-            saveEvents();
-          }
+   <script>
+  let calendar; // variável global
+
+  document.addEventListener('DOMContentLoaded', function () {
+    const calendarEl = document.getElementById('calendar');
+    calendar = new FullCalendar.Calendar(calendarEl, {
+      initialView: 'dayGridMonth',
+      events: JSON.parse(localStorage.getItem('events')) || [],
+      eventClick: function (info) {
+        if (confirm(`Deseja remover a atividade "${info.event.title}"?`)) {
+          info.event.remove();
+          saveEvents();
         }
-      });
-      calendar.render();
+      }
     });
+    calendar.render();
+  });
+
+  function saveEvents() {
+    const events = calendar.getEvents().map(event => ({
+      title: event.title,
+      start: event.start.toISOString()
+    }));
+    localStorage.setItem('events', JSON.stringify(events));
+  }
+
+  function addEvent() {
+    const title = document.getElementById('event-title').value;
+    const date = document.getElementById('event-date').value;
+    if (title && date) {
+      calendar.addEvent({
+        title: title,
+        start: date
+      });
+      saveEvents();
+      document.getElementById('event-title').value = '';
+      document.getElementById('event-date').value = '';
+    } else {
+      alert('Por favor, preencha o título e a data da atividade.');
+    }
+  }
+</script>
 
     // Função para salvar eventos no localStorage
     function saveEvents() {
