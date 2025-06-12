@@ -1,4 +1,174 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<!-- conteúdo omitido para brevidade, substituído no upload -->
-</html>
+<script>
+  let calendar;
+
+  document.addEventListener('DOMContentLoaded', function () {
+    const calendarEl = document.getElementById('calendar');
+    calendar = new FullCalendar.Calendar(calendarEl, {
+      initialView: 'dayGridMonth',
+      events: JSON.parse(localStorage.getItem('events')) || [],
+      eventClick: function (info) {
+        if (confirm(Deseja remover a atividade "${info.event.title}"?)) {
+          info.event.remove();
+          saveEvents();
+        }
+      }
+    });
+    calendar.render();
+  });
+
+  function saveEvents() {
+    const events = calendar.getEvents().map(event => ({
+      title: event.title,
+      start: event.start.toISOString()
+    }));
+    localStorage.setItem('events', JSON.stringify(events));
+  }
+
+  function addEvent() {
+    const title = document.getElementById('event-title').value;
+    const date = document.getElementById('event-date').value;
+
+    if (title && date) {
+      calendar.addEvent({
+        title: title,
+        start: date
+      });
+      saveEvents();
+      document.getElementById('event-title').value = '';
+      document.getElementById('event-date').value = '';
+    } else {
+      alert('Por favor, preencha o título e a data da atividade.');
+    }
+  }
+
+  // Adicionar anotação
+  function addNote() {
+    const title = document.getElementById('note-title').value;
+    const content = document.getElementById('note-content').value;
+    if (title && content) {
+      const note = { title, content, id: Date.now() };
+      const notes = JSON.parse(localStorage.getItem('notes')) || [];
+      notes.push(note);
+      localStorage.setItem('notes', JSON.stringify(notes));
+      renderNotes();
+      document.getElementById('note-title').value = '';
+      document.getElementById('note-content').value = '';
+    } else {
+      alert('Por favor, preencha o título e o conteúdo da anotação.');
+    }
+  }
+
+  // Renderizar anotações
+  function renderNotes() {
+    const notesContainer = document.getElementById('notes-container');
+    const notes = JSON.parse(localStorage.getItem('notes')) || [];
+    notesContainer.innerHTML = '';
+    notes.forEach(note => {
+      const noteCard = document.createElement('div');
+      noteCard.className = 'note-card';
+      noteCard.innerHTML = `
+        <h3 class="font-semibold">${note.title}</h3>
+        <p>${note.content}</p>
+        <button onclick="deleteNote(${note.id})" class="text-red-500 hover:underline">Excluir</button>
+      `;
+      notesContainer.appendChild(noteCard);
+    });
+  }
+
+  // Excluir anotação
+  function deleteNote(id) {
+    let notes = JSON.parse(localStorage.getItem('notes')) || [];
+    notes = notes.filter(note => note.id !== id);
+    localStorage.setItem('notes', JSON.stringify(notes));
+    renderNotes();
+  }
+
+  // Adicionar banco de dados
+  function addDatabase() {
+    const title = document.getElementById('database-title').value;
+    const content = document.getElementById('database-content').value;
+    if (title && content) {
+      const database = { title, content, id: Date.now() };
+      const databases = JSON.parse(localStorage.getItem('databases')) || [];
+      databases.push(database);
+      localStorage.setItem('databases', JSON.stringify(databases));
+      renderDatabases();
+      document.getElementById('database-title').value = '';
+      document.getElementById('database-content').value = '';
+    } else {
+      alert('Por favor, preencha o título e o conteúdo do banco de dados.');
+    }
+  }
+
+  // Renderizar bancos de dados
+  function renderDatabases() {
+    const databasesContainer = document.getElementById('databases-container');
+    const databases = JSON.parse(localStorage.getItem('databases')) || [];
+    databasesContainer.innerHTML = '';
+    databases.forEach(db => {
+      const dbCard = document.createElement('div');
+      dbCard.className = 'database-card';
+      dbCard.innerHTML = `
+        <h3 class="font-semibold">${db.title}</h3>
+        <p>${db.content}</p>
+        <button onclick="deleteDatabase(${db.id})" class="text-red-500 hover:underline">Excluir</button>
+      `;
+      databasesContainer.appendChild(dbCard);
+    });
+  }
+
+  // Excluir banco de dados
+  function deleteDatabase(id) {
+    let databases = JSON.parse(localStorage.getItem('databases')) || [];
+    databases = databases.filter(db => db.id !== id);
+    localStorage.setItem('databases', JSON.stringify(databases));
+    renderDatabases();
+  }
+
+  // Adicionar conexão de ideias
+  function addConnection() {
+    const title = document.getElementById('connection-title').value;
+    const link = document.getElementById('connection-link').value;
+    if (title && link) {
+      const connection = { title, link, id: Date.now() };
+      const connections = JSON.parse(localStorage.getItem('connections')) || [];
+      connections.push(connection);
+      localStorage.setItem('connections', JSON.stringify(connections));
+      renderConnections();
+      document.getElementById('connection-title').value = '';
+      document.getElementById('connection-link').value = '';
+    } else {
+      alert('Por favor, preencha o título e o link da conexão.');
+    }
+  }
+
+  // Renderizar conexões
+  function renderConnections() {
+    const connectionsContainer = document.getElementById('connections-container');
+    const connections = JSON.parse(localStorage.getItem('connections')) || [];
+    connectionsContainer.innerHTML = '';
+    connections.forEach(conn => {
+      const connCard = document.createElement('div');
+      connCard.className = 'note-card';
+      connCard.innerHTML = `
+        <h3 class="font-semibold">${conn.title}</h3>
+        <p>Link para: ${conn.link}</p>
+        <button onclick="deleteConnection(${conn.id})" class="text-red-500 hover:underline">Excluir</button>
+      `;
+      connectionsContainer.appendChild(connCard);
+    });
+  }
+
+  // Excluir conexão
+  function deleteConnection(id) {
+    let connections = JSON.parse(localStorage.getItem('connections')) || [];
+    connections = connections.filter(conn => conn.id !== id);
+    localStorage.setItem('connections', JSON.stringify(connections));
+    renderConnections();
+  }
+
+  // Carregar anotações, bancos e conexões ao iniciar
+  renderNotes();
+  renderDatabases();
+  renderConnections();
+</script>
